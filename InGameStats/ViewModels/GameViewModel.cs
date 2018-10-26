@@ -71,7 +71,7 @@ namespace ViewModels
             this.Linups2 = this.GetBestLineup(2);
 
 
-            var allLineUps = this.GetLineup(5);
+            IList<LineUpViewModel> allLineUps = this.GetLineup(5);
 
             this.OffensiveLineups = allLineUps.OrderByDescending(lu => lu.TeamScore / lu.Minutes.TotalMinutes).FirstOrDefault();
             this.DefensiveLineups = allLineUps.OrderBy(lu => lu.OponentScore / lu.Minutes.TotalMinutes).FirstOrDefault();
