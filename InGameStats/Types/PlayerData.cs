@@ -241,7 +241,7 @@ namespace Types
 
         public class GameSnapshot
         {
-            public int? SnapshotScoreDiff { get; }
+            private int? SnapshotScoreDiff { get; }
 
             public ReadOnlyCollection<int> PlayerNumbers { get; }
             public int Quarter { get; }
