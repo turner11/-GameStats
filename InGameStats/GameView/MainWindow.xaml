@@ -1,0 +1,308 @@
+﻿<Window x:Class="GameView.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GameView"
+        xmlns:System="clr-namespace:System;assembly=mscorlib" 
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525"
+        Loaded="Window_Loaded"
+        Closing="Window_Closing">
+    <Window.Resources>
+        <DataTemplate x:Key="SelectionButtonsTemplate">
+            <Grid Background="BurlyWood"></Grid>
+        </DataTemplate>
+
+        <!--<Style TargetType="{x:Type Button}">
+            
+            <Setter Property="Template">
+                
+
+                <Setter.Value>
+                    
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid Background="DarkOrange" >
+                            <ContentControl  Content="{TemplateBinding Content}" 
+                                             HorizontalAlignment="Left" 
+                                             VerticalAlignment="Center" 
+                                             />
+                        </Grid>
+                    </ControlTemplate>
+                   
+                </Setter.Value>
+            </Setter>
+            
+                
+        </Style>-->
+
+
+
+        <Style TargetType="ListView">
+            <Setter Property="Background" Value="Black"></Setter>
+            <Setter Property="MinWidth" Value="175"></Setter>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="LightBlue"></Setter>
+            <Setter Property="Padding" Value="5"></Setter>
+        </Style>
+
+
+        <ControlTemplate x:Key="ImageWithText">
+            <Grid>
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top">Operation</TextBlock>
+            </Grid>
+        </ControlTemplate>
+
+        <DataTemplate x:Key="ModelSnapShotsTemplate">
+            <StackPanel Orientation="Horizontal" Background="White"  MinWidth="400">
+                <!--<local:LabeledImage ImageSource="{Binding Path=Player1}"/>-->
+                <Image Source="{Binding Path=Player1}" MaxHeight="50" Width="50" Stretch="Uniform"/>
+                 
+                <Image Source="{Binding Path=Player2}" MaxHeight="50" Width="50" Stretch="Uniform"/>
+                <Image Source="{Binding Path=Player3}" MaxHeight="50" Width="50" Stretch="Uniform"/>
+                <Image Source="{Binding Path=Player4}" MaxHeight="50" Width="50" Stretch="Uniform"/>
+                <Image Source="{Binding Path=Player5}" MaxHeight="50" Width="50" Stretch="Uniform"/>
+
+                <TextBlock Padding="5">
+
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}:{1}">
+                            <Binding Path="TeamScore" />
+                            <Binding Path="OponentScore" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+
+                </TextBlock>
+                <TextBlock Padding="5">
+
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}Q{0}: {1}">
+                            <Binding Path="Quarter"/>
+                            <Binding Path="Elapsed" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+
+                </TextBlock>
+
+                <TextBlock  Padding="5" Text="{Binding ScoreDiff, StringFormat={}{0:+#;-#;'0'}}" FontWeight="Bold">
+
+
+
+                </TextBlock>
+
+            </StackPanel>
+
+
+
+        </DataTemplate>
+
+
+        <DataTemplate x:Key="ModelDataTemplate">
+
+            <StackPanel Orientation="Horizontal" Background="White" HorizontalAlignment="Stretch" MinWidth="200">
+                <!--Text="{Binding Path=Model_Id, FallbackValue=Model_Id}"-->
+                <Image Source="{Binding Path=Image}" MaxHeight="50" Width="50" Stretch="Uniform"/>
+                <Grid >
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+
+
+
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{Binding Path=Number, 
+                 StringFormat='#{0}'}"
+                               Grid.Row="0" Grid.Column="0" FontWeight="Bold" Foreground="Orange" Padding="10,0,0,0" />
+
+
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" TextWrapping="NoWrap"  Padding="10,0,0,0" >
+
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}+- PER MINUTE: {1:0.##} {0} {2:mm':'ss} MINUTES  {0}RATE: {3}">
+                                <Binding Source="{x:Static System:Environment.NewLine}"/>
+                                <Binding Path="RatePerMinute" />
+                                <Binding Path="Minutes" />
+                                <Binding Path="Rate" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+
+                    </TextBlock>
+
+                    <!--<TextBlock Text="+- Per Minute" 
+                                FontWeight="Bold"/>
+                    <TextBlock Text="{Binding Path=RatePerMinute}" 
+                               />
+
+                    <TextBlock Text="Total +-" 
+                               Grid.Row="2" Grid.Column="0" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding Path=Rate}" 
+                               Grid.Row="2" Grid.Column="1"/>
+
+
+                    <TextBlock Text="Minutes" 
+                               Grid.Row="3" Grid.Column="0" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding Path=Minutes}" 
+                               Grid.Row="3" Grid.Column="1"/>-->
+
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <!--<RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>-->
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Column="0" Name="pnlNavigation">
+            <Button Name="btnSelectCsv" 
+                    Click="btnSelectCsv_Click" 
+                    Height="50"
+                    
+                    Content="Select CSV"></Button>
+            <Button Name="btnNewCsv" 
+                    Click="btnNewCsv_Click" 
+                    Height="50"
+                    Content="Use New CSV"></Button>
+
+            <GroupBox>
+                <StackPanel>
+                    <RadioButton Name="rdbTrack" Content="Track" 
+                             Checked="rdbTracking_CheckedChanged"
+                             Unchecked="rdbTracking_CheckedChanged"/>
+                    <RadioButton Name="rdbStopTracking"  Content="Stop Tracking"
+                                 IsChecked="True"
+                             Checked="rdbTracking_CheckedChanged"
+                             Unchecked="rdbTracking_CheckedChanged"/>
+                </StackPanel>
+
+            </GroupBox>
+
+
+        </StackPanel>
+        <TabControl Grid.Column="1" Grid.Row="0" >
+            <TabItem Header="Lineups">
+                <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
+                    
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions >
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                     
+                            <!--<StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Name="pnlLineups">-->
+
+                            <!--<DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+            Margin="0,0,0,0" x:Name="ReferenceInfo" Canvas.Left="0" Canvas.Top="0"
+            Width="{Binding ActualWidth, ElementName=InfoCanvas}"
+            Height="{Binding ActualHeight, ElementName=InfoCanvas}">-->
+                            <DockPanel 
+                                VerticalAlignment="Stretch" 
+                                       HorizontalAlignment="Stretch" 
+                                       Margin="0,0,0,0" x:Name="pnlDockLinups" 
+                                       
+                                       >
+                                <ScrollViewer VerticalScrollBarVisibility="Visible">
+                                        <ListView  Name="lvLinup1"
+                                   ItemsSource="{Binding PlayersData}"
+                                   ItemTemplate="{StaticResource ModelDataTemplate}"/>
+                                    </ScrollViewer>
+
+                                    <ListView  Name="lvLinup5"
+                                   ItemsSource="{Binding Path=Linups5.Players,  UpdateSourceTrigger=PropertyChanged}"
+                                   ItemTemplate="{StaticResource ModelDataTemplate}"/>
+
+                                    <ListView  Name="lvLinup4"
+                                   ItemsSource="{Binding Path=Linups4.Players,  UpdateSourceTrigger=PropertyChanged}"
+                                   ItemTemplate="{StaticResource ModelDataTemplate}"/>
+
+                                    <ListView  Name="lvLinup3"
+                                   ItemsSource="{Binding Path=Linups3.Players,  UpdateSourceTrigger=PropertyChanged}"
+                                   ItemTemplate="{StaticResource ModelDataTemplate}"/>
+
+                                    <ListView  Name="lvLinup2"  
+                                   ItemsSource="{Binding Path=Linups2.Players,  UpdateSourceTrigger=PropertyChanged}"
+                                   ItemTemplate="{StaticResource ModelDataTemplate}"/>
+                        </DockPanel>
+                                <!--</StackPanel>-->
+                    </Grid>
+
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Features">
+                <StackPanel Orientation="Horizontal">
+                    <DockPanel 
+                                VerticalAlignment="Stretch" 
+                                       HorizontalAlignment="Stretch" 
+                                       Margin="0,0,0,0" x:Name="pnlDockFeatures" >
+                <ListView  Name="lvMinutes"
+                           ItemsSource="{Binding PlayerMinutes}"
+                           ItemTemplate="{StaticResource ModelDataTemplate}"/>
+                        <StackPanel>
+                            <TextBlock                      
+                               FontWeight="Bold" >
+                            <TextBlock.Text>
+                                    <MultiBinding  StringFormat="Offensive lineup (SPM: {0}/{1})'">
+                                        <Binding Path="OffensiveLineups.TeamScore" />
+                                        <Binding Path="OffensiveLineups.Minutes.TotalMinutes" />
+                                </MultiBinding>
+                            
+                            </TextBlock.Text>
+                            </TextBlock>
+                            <ListView  Name="lvOffensive"                           
+                               ItemsSource="{Binding Path=OffensiveLineups.Players,  
+                                UpdateSourceTrigger=PropertyChanged}"
+                           ItemTemplate="{StaticResource ModelDataTemplate}"/>
+                        </StackPanel>
+                        <StackPanel>
+
+                            <TextBlock                      
+                               FontWeight="Bold" >
+                                <TextBlock.Text>
+                                    <MultiBinding  StringFormat="Deffensive lineup (SPM: {0}/{1})'">
+                                        <Binding Path="DefensiveLineups.OponentScore" />
+                                        <Binding Path="DefensiveLineups.Minutes.TotalMinutes" />
+                                    </MultiBinding>
+
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <ListView  Name="lvDefensive"                           
+                               ItemsSource="{Binding Path=DefensiveLineups.Players,  
+                                UpdateSourceTrigger=PropertyChanged}"
+                           ItemTemplate="{StaticResource ModelDataTemplate}"/>
+                        </StackPanel>
+                    </DockPanel>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="Snapshots">
+                <ListView  Name="lvSnapshots"
+                           ItemsSource="{Binding SnapShotsViewModel}"
+                           ItemTemplate="{StaticResource ModelSnapShotsTemplate}"/>
+            </TabItem>
+        </TabControl>
+
+
+
+
+
+
+
+    </Grid>
+</Window>
