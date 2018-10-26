@@ -30,7 +30,7 @@ namespace ViewModels
         public int OponentScore => this._snapshot.OponentScore;
         public int Quarter => this._snapshot.Quarter;
         public string Elapsed => this._snapshot.Elapsed?.ToString("mm':'ss") ?? "?";
-        public int? ScoreDiff => this._snapshot.SnapshotScoreDiff;
+        public int? ScoreDiff => this._snapshot.ScoreDiff;
 
 
 
