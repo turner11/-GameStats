@@ -158,7 +158,7 @@ namespace Types
                 }
                 if (!success)
                 {
-                    throw new InvalidDataException($"Failed to parse time data (timeLeftInQuarter):\n {timeLeftInQuarter}");
+                    throw new InvalidDataException($"Failed to parse time data (timeLeftInQuarter):\n {timeLeftInQuarterStr}");
                 }
 
 
