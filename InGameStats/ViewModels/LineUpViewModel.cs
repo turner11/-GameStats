@@ -45,7 +45,7 @@ namespace ViewModels
             {
                 throw new ArgumentException("Need an instance of LineUpViewModel for comparison.");
             }
-            return -1 * this.RatePerMinute.CompareTo(other.RatePerMinute);
+            return this.RatePerMinute.CompareTo(other.RatePerMinute);
         }
 
         public int CompareTo(object obj)
