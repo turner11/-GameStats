@@ -8,8 +8,6 @@ using NUnit.Framework;
 
 namespace Tetsts
 {
-    
-
     [TestFixture]
     public class EntryiesTests
     {
@@ -46,7 +44,7 @@ namespace Tetsts
 
 
         [Test(Description = "Get Correct number of Entries")]
-        public void NumberOfPlayers()
+        public void NumberOfEntries()
         {
             var entries = CsvImporter.GetEntries(CSV_3_SNAPSHOTS);
             Assert.AreEqual(3, entries.Count);
