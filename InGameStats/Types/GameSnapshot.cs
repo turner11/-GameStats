@@ -7,30 +7,10 @@ using System.Threading.Tasks;
 
 namespace Types
 {
-    public class GameSnapshot
+    public class GameSnapshot:RawEntry
     {
         private int? SnapshotScoreDiff { get; }
-
-        public ReadOnlyCollection<int> PlayerNumbers { get; }
-        public int Quarter { get; }
-        public TimeSpan TimeLeft { get; }
-        public TimeSpan TotalTimeLeft
-        {
-            get
-            {
-                return GetTotalTimeLeft(this.Quarter, TimeLeft);
-            }
-        }
-
-        internal static TimeSpan GetTotalTimeLeft(int quarter, TimeSpan TimeLeftInQuarter)
-        {
-            var minutes = (4 - quarter) * 10.0 + TimeLeftInQuarter.TotalMinutes;
-            return TimeSpan.FromMinutes(minutes);
-        }
-
-        public int TeamScore { get; }
-        public int OponentScore { get; }
-
+        
         public int ScoreDiff
         {
             get { return this.SnapshotScoreDiff ?? 0; }
@@ -45,21 +25,61 @@ namespace Types
 
         public TimeSpan? Elapsed { get; }
 
-        public GameSnapshot(IList<int> playerNumber, int quarter, TimeSpan timeLeft, int teamScore, int oponentScore, TimeSpan? elapsed, int? snapshotScoreDiff = null)
+        private GameSnapshot(IList<int> playerNumber, int quarter, TimeSpan timeLeft, int teamScore, int oponentScore, TimeSpan? elapsed, int snapshotScoreDiff)
+            :base(playerNumber, quarter, timeLeft, teamScore, oponentScore)
         {
-            this.PlayerNumbers = (playerNumber ?? new int[0]).ToList().AsReadOnly();
-            this.Quarter = quarter;
-            this.TimeLeft = timeLeft;
-            this.TeamScore = teamScore;
-            this.OponentScore = oponentScore;
+            
             this.Elapsed = elapsed;
             this.SnapshotScoreDiff = snapshotScoreDiff;
         }
 
+        public static List<GameSnapshot> Factory(IList<RawEntry> entries)
+        {
+            var snapshots = new List<GameSnapshot>();
+            if (entries.Count == 0)
+                return snapshots;
+
+
+            var expandedEntries = entries.Select(e => e).ToList();
+            expandedEntries.Add(expandedEntries.LastOrDefault()); //For making the last one count as if no change...
+
+            for (int i = 1; i < expandedEntries.Count; i++)
+            {
+                var entry = expandedEntries[i-1];
+                var nextEntry = expandedEntries[i];
+                TimeSpan? elapsed = entry.TotalTimeLeft - nextEntry.TotalTimeLeft;
+
+
+                var nextDiff = nextEntry.TeamScore - nextEntry.OponentScore;
+                var currDiff = entry.TeamScore - entry.OponentScore;
+                int snapshotScoreDiff = nextDiff - currDiff ;
+
+                var snapshot = new GameSnapshot(entry.PlayerNumbers, entry.Quarter, entry.TimeLeft, entry.TeamScore, entry.OponentScore,
+                                elapsed, snapshotScoreDiff: snapshotScoreDiff);
+                
+                snapshots.Add(snapshot);
+            }
+
+            //RawEntry lastEntry = entries.LastOrDefault();
+            //var lastSnashot = new GameSnapshot(lastEntry.PlayerNumbers,
+            //                                    lastEntry.Quarter,
+            //                                    lastEntry.TimeLeft,
+            //                                    lastEntry.TeamScore,
+            //                                    lastEntry.OponentScore,
+            //                                    TimeSpan.FromSeconds(0),
+            //                                    snapshotScoreDiff: 0);
+
+            //snapshots.Add(lastSnashot);
+            return snapshots;
+        }
+
         public static GameSnapshot GetBeginingOfGameSnapshot()
         {
-            return new GameSnapshot(new int[0], 1, TimeSpan.FromMinutes(10), 0, 0, TimeSpan.FromSeconds(0));
+            return new GameSnapshot(new int[0], 1, TimeSpan.FromMinutes(10), 0, 0, TimeSpan.FromSeconds(0),0);
         }
+
+
+
         public override string ToString()
         {
             return $"Quarter:{this.Quarter} {this.TimeLeft}; {this.TeamScore}:{this.OponentScore}; ({String.Join(",", this.PlayerNumbers)})";

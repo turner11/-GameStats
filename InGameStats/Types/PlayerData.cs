@@ -21,65 +21,35 @@ namespace Types
 
 
         public static IList<PlayerData> GetData(IEnumerable<GameSnapshot> snapShotsCollection)
-        {   
-            var players = new List<PlayerData>();
+        {
             var snapShots = snapShotsCollection.ToList();
-            if (snapShots.Count < 1)
-                return players;
-            players =
-                snapShots.SelectMany(snp => snp.PlayerNumbers)
-                .Distinct()
-                .Select(pn => new PlayerData(pn)).ToList();
+            var playerNumber = snapShots.SelectMany(sn => sn.PlayerNumbers).Distinct().OrderBy(n => n).ToList();
+            List<PlayerData> players = playerNumber.Select(n => PlayerData.FromSnapShots(n, snapShots)).ToList();
+            players = players.Where(p => p != null).ToList();
+            return players;
 
-            var me = players.Where(p => p.Number == 11).FirstOrDefault();
-            for (int i = 0; i < snapShots.Count; i++)
+
+        }
+
+        private static PlayerData FromSnapShots(int playerNumber, List<GameSnapshot> snapShots)
+        {
+            if (snapShots.Count == 0)
+                return null;
+            var player = new PlayerData(playerNumber);
+            var relevantSnapshots = snapShots.Where(sn => sn.PlayerNumbers.Contains(player.Number)).ToList();
+
+            for (int i = 0; i < relevantSnapshots.Count; i++)
             {
-                var snp = snapShots[i];
-                GameSnapshot prevSnap = i > 0 ?
-                                        snapShots[i - 1]
-                                        : GameSnapshot.GetBeginingOfGameSnapshot();
-
-                var currPlayers = players.Where(p => snp.PlayerNumbers.Contains(p.Number)).ToList();
-                var subbedOutPlayers = players.Where(p => prevSnap.PlayerNumbers.Contains(p.Number))
-                                              .Where(p => !currPlayers.Contains(p)).ToList();
-                var playerInPrevSnap = players.Where(p => prevSnap.PlayerNumbers.Contains(p.Number)).ToList();
-
-
-                
-                foreach (var player in playerInPrevSnap)
-                {
-                    player.Rate += snp.ScoreDiff;
-                }
-
-                ////For end of game
-                //if (snp.TotalTimeLeft.TotalMinutes == 0)
-                //{
-                //    foreach (var player in currPlayers)
-                //    {
-                //        {
-                //            player.Rate += snp.ScoreDiff;
-                //        }
-                //    }
-                //}
-                var timeDiff = prevSnap.Elapsed;
-                if (timeDiff.HasValue)
-                {
-                    var nonSubbedPlayers = snp.PlayerNumbers.Intersect(prevSnap.PlayerNumbers)
-                                        .Select(n => players.Where(p => p.Number == n).FirstOrDefault())
-                                        .ToList();
-                    var playersToIncreasMinutes = nonSubbedPlayers.Union(subbedOutPlayers).Distinct().ToList();
-                    foreach (var p in playersToIncreasMinutes)
-                    {
-                        p.Minutes += timeDiff.Value;
-                    }
-                }
+                var snp = relevantSnapshots[i];
+                player.Rate += snp.ScoreDiff;
+                player.Minutes += snp.Elapsed ?? TimeSpan.FromSeconds(0);
             }
 
-            snapShots.ToString();
 
-            return players;
+            return player;
+
         }
-        
+
         public override bool Equals(object obj)
         {
             return obj != null && this.Number == (obj as PlayerData).Number;
@@ -94,8 +64,5 @@ namespace Types
         }
         
 
-        
-
-       
     }
 }

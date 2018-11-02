@@ -33,11 +33,18 @@ namespace Types
 
         public static List<GameSnapshot> GetGameSnapShots(string csvText)
         {
-            var snapShots = new List<GameSnapshot>();
+            IList<RawEntry> entries = CsvImporter.GetEntries(csvText);
+            List<GameSnapshot> snapshots = GameSnapshot.Factory(entries);
+            return snapshots;
+        }
+
+        public static IList<RawEntry> GetEntries(string csvText)
+        {
+            var entries = new List<RawEntry>();
 
             var lines = csvText.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
             if (lines.Length < 2)
-                return snapShots;
+                return entries;
 
             var header = lines.FirstOrDefault();
             var hData = header.Split(',').ToList();
@@ -111,45 +118,11 @@ namespace Types
                 {
                     throw new InvalidDataException($"Failed to parse time data (timeLeftInQuarter):\n {timeLeftInQuarterStr}");
                 }
-
-
-                //We can know this only after gathering all information
-                TimeSpan elapsed = TimeSpan.FromMinutes(0);
-                var snapshot = new GameSnapshot(playerNumbers, quarter, timeLeftInQuarter, score, op_score, elapsed);
-                snapShots.Add(snapshot);
-
+                var snapshot = new RawEntry(playerNumbers, quarter, timeLeftInQuarter, score, op_score);
+                entries.Add(snapshot);
             }
-            snapShots = snapShots.OrderBy(snp => snp.Quarter).ThenByDescending(snp => snp.TimeLeft).ToList();
-
-            var fixedSnapshots = new List<GameSnapshot>();
-            for (int i = 0; i < snapShots.Count; i++)
-            {
-                var oldSN = snapShots[i];
-                TimeSpan? elapsed;
-                int? snapshotScoreDiff = null;
-
-                if (i < snapShots.Count - 1)
-                {
-                    var nextSN = snapShots[i + 1];
-                    elapsed = oldSN.TotalTimeLeft - nextSN.TotalTimeLeft;
-                }
-                else
-                    elapsed = null;
-
-                var previousSN = fixedSnapshots.LastOrDefault();
-                if (previousSN != null)
-                {
-                    snapshotScoreDiff = oldSN.GameScoreDiff - previousSN.GameScoreDiff;
-                }
-                var fixedSN = new GameSnapshot(oldSN.PlayerNumbers, oldSN.Quarter, oldSN.TimeLeft, oldSN.TeamScore, oldSN.OponentScore,
-                                elapsed, snapshotScoreDiff: snapshotScoreDiff);
-
-                fixedSnapshots.Add(fixedSN);
-            }
-
-
-
-            return fixedSnapshots;
+            entries = entries.OrderBy(snp => snp.Quarter).ThenByDescending(snp => snp.TimeLeft).ToList();
+            return entries;
         }
     }
 }

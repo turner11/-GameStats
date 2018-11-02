@@ -38,7 +38,7 @@ namespace Tetsts
         {
             List<GameSnapshot> snapshots = GetSnapshots();
 
-            Assert.AreEqual(snapshots.Count,3, "Got unexxpected number of snapshots");
+            Assert.AreEqual(3, snapshots.Count, "Got unexxpected number of snapshots");
         }
 
         [TestMethod]
@@ -71,9 +71,9 @@ namespace Tetsts
             (Snapshots sn1, Snapshots sn2, Snapshots sn3) = Get3Snapshots();
 
 
-            Assert.AreEqual(sn1.ScoreDiff, 0, "Got bad Snapshot score diff value");
-            Assert.AreEqual(sn2.ScoreDiff, 1, "Got bad Snapshot score diff value");
-            Assert.AreEqual(sn3.ScoreDiff, -2, "Got bad Snapshot score diff value");
+            Assert.AreEqual(sn1.ScoreDiff, 1, "Got bad Snapshot score diff value");
+            Assert.AreEqual(sn2.ScoreDiff, -2, "Got bad Snapshot score diff value");
+            Assert.AreEqual(sn3.ScoreDiff, 0, "Got bad Snapshot score diff value");
         }
 
         [TestMethod]
@@ -106,9 +106,9 @@ namespace Tetsts
         {
             (Snapshots sn1, Snapshots sn2, Snapshots sn3) = Get3Snapshots();
 
-            Assert.AreEqual(sn1.TotalTimeLeft, TimeSpan.FromMinutes(40), "Got bad time left");
-            Assert.AreEqual(sn2.TotalTimeLeft, TimeSpan.FromMinutes(30), "Got bad time left");
-            Assert.AreEqual(sn3.TotalTimeLeft.TotalSeconds, 0, "Got bad time left");
+            Assert.AreEqual(TimeSpan.FromMinutes(40), sn1.TotalTimeLeft,  "Got bad time left");
+            Assert.AreEqual(TimeSpan.FromMinutes(30), sn2.TotalTimeLeft, "Got bad time left");
+            Assert.AreEqual(0, sn3.TotalTimeLeft.TotalSeconds, "Got bad time left");
         }
 
        
