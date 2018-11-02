@@ -10,6 +10,7 @@ namespace Types
 {
     public class LineUp: IComparable<LineUp>, IReadOnlyList<int>, IComparable
     {
+        static readonly LineUp NULL_OBJECT = new LineUp(null);
         public ReadOnlyCollection<int> PlayerNumbers { get; }
         public IReadOnlyList<GameSnapshot> Snapshots { get; }
         public int Rate { get; }
@@ -30,6 +31,7 @@ namespace Types
 
         public LineUp(IEnumerable<GameSnapshot> snapShots, params int[] players)
         {
+            snapShots = snapShots ?? new List<GameSnapshot>();
             this.PlayerNumbers = players.OrderBy(n => n).ToList().AsReadOnly();
 
             //var ps = new int[] { 5, 2, 22, 55, 8 };
@@ -52,6 +54,9 @@ namespace Types
         private ReadOnlyCollection<GameSnapshot> GetRelevantSnapshots(IEnumerable<GameSnapshot> snapShots)
         {
             var playerNumbers = this.ToList();
+            if (playerNumbers.Count == 0)
+                return new List<GameSnapshot>().AsReadOnly();
+
             var relevantSnapshots = snapShots.Where(sn=> sn.PlayerNumbers.Intersect(playerNumbers).Count() == playerNumbers.Count).ToList();
             return relevantSnapshots.AsReadOnly();
         }
@@ -63,7 +68,7 @@ namespace Types
                                             filter:lu=> !double.IsNaN(lu.RatePerMinute) & lu.Elapsed >= minTime,
                                             orderBy: lu => lu);
             var bestLinup = lineups.FirstOrDefault();
-            return bestLinup;
+            return bestLinup ?? NULL_OBJECT;
 
         }
         public static IList<LineUp> GetLineups(int playerCount, IEnumerable<GameSnapshot> snapshots)
@@ -84,7 +89,7 @@ namespace Types
             else
                 combos = combos.OrderBy(lu => lu).ToList();
 
-            var lineups = combos.ToList();
+            var lineups = combos.Where(c=> c != null).ToList();
             return lineups;
         }
 
@@ -109,7 +114,7 @@ namespace Types
 
             
             var lineup = allLineUps.OrderByDescending(lu => lu.TeamScore).FirstOrDefault();
-            return lineup;
+            return lineup ?? NULL_OBJECT;
         }
 
 
@@ -121,7 +126,7 @@ namespace Types
 
 
             var lineup = allLineUps.OrderBy(lu => lu.OponentScore).FirstOrDefault();
-            return lineup;
+            return lineup ?? NULL_OBJECT;
         }
 
 
