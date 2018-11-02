@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Tetsts
 {
-    using Snapshots = PlayerData.GameSnapshot;
+    using Snapshots = GameSnapshot;
     [TestClass]
     public class SnapshotsTests
     {
@@ -29,14 +29,14 @@ namespace Tetsts
 
         private static List<Snapshots> GetSnapshots()
         {
-            return PlayerData.GetGameSnapShots(CSV_3_SNAPSHOTS);
+            return CsvImporter.GetGameSnapShots(CSV_3_SNAPSHOTS);
         }
 
         [TestMethod]
         [Description("Get Correct number of snapshots")]
         public void NumberOfSnapshots()
         {
-            List<PlayerData.GameSnapshot> snapshots = GetSnapshots();
+            List<GameSnapshot> snapshots = GetSnapshots();
 
             Assert.AreEqual(snapshots.Count,3, "Got unexxpected number of snapshots");
         }

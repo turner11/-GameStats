@@ -127,7 +127,7 @@ namespace GameView
 
         private void Csv_TextChanged(object sender, EventArgs e)
         {
-            List<PlayerData.GameSnapshot> snapShots = PlayerData.GetGameSnapShots(this.CurrentText);
+            List<GameSnapshot> snapShots = CsvImporter.GetGameSnapShots(this.CurrentText);
             
 
             Application.Current.Dispatcher.BeginInvoke(
@@ -169,7 +169,7 @@ namespace GameView
 
             try
             {
-                PlayerData.CsvHandler.CreateTemplate(path);
+                CsvImporter.CreateTemplate(path);
                 this.CsvPath = path;
                 System.Diagnostics.Process.Start(path);
             }

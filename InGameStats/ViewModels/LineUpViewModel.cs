@@ -11,7 +11,7 @@ namespace ViewModels
     public class LineUpViewModel: ViewModelBase, IComparable<LineUpViewModel>, IComparable
     {
         public IReadOnlyCollection<PlayerViewModel> Players { get; }
-        public IReadOnlyCollection<PlayerData.GameSnapshot> SnapShots { get; }
+        public IReadOnlyCollection<GameSnapshot> SnapShots { get; }
         public TimeSpan Minutes { get; }
         public int Rate { get; }
         public int TeamScore { get; }
@@ -19,7 +19,7 @@ namespace ViewModels
 
         public double RatePerMinute { get; }
 
-        public LineUpViewModel(IEnumerable<PlayerViewModel> players, IEnumerable<PlayerData.GameSnapshot> snapShots )
+        public LineUpViewModel(IEnumerable<PlayerViewModel> players, IEnumerable<GameSnapshot> snapShots )
         {
             this.Players = players.OrderByDescending(p=>p.RatePerMinute).ToList().AsReadOnly();
             this.SnapShots = snapShots.Where(sn => players.All(p=> sn.PlayerNumbers.Contains(p.Number) )).ToList().AsReadOnly();

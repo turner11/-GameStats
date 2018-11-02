@@ -20,7 +20,7 @@ namespace Tetsts
 
         private static IList<PlayerData> GetPlayers()
         {
-            var snapshots = PlayerData.GetGameSnapShots(CSV_3_SNAPSHOTS);
+            var snapshots = CsvImporter.GetGameSnapShots(CSV_3_SNAPSHOTS);
             var players = PlayerData.GetData(snapshots);
             
             return players;

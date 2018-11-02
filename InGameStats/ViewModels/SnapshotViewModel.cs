@@ -8,8 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Types;
 using Utils;
-using static Types.PlayerData;
+
 
 namespace ViewModels
 {

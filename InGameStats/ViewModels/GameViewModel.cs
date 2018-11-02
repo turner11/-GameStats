@@ -13,7 +13,7 @@ namespace ViewModels
 
        
 
-        private readonly List<PlayerData.GameSnapshot> _snapshots;
+        private readonly List<GameSnapshot> _snapshots;
         public ObservableCollection<PlayerViewModel> PlayersData { get; }
 
         public ObservableCollection<SnapshotViewModel> SnapShotsViewModel { get; }
@@ -34,7 +34,7 @@ namespace ViewModels
 
         public GameViewModel(IPlayerImageProvider imageProvider=null)
         {
-            this._snapshots = new List<PlayerData.GameSnapshot>();
+            this._snapshots = new List<GameSnapshot>();
             this.PlayersData = new ObservableCollection<PlayerViewModel>();
 
             this.Linups5 = null;
@@ -54,7 +54,7 @@ namespace ViewModels
         }
 
 
-        public void SetSnapShots(IEnumerable<PlayerData.GameSnapshot> snapShots)
+        public void SetSnapShots(IEnumerable<GameSnapshot> snapShots)
         {
             this._snapshots.Clear();
             this._snapshots.AddRange(snapShots);
@@ -138,7 +138,7 @@ namespace ViewModels
             }
         }
 
-        private List<List<PlayerViewModel>> GetAllPlayersCombo(IEnumerable<PlayerData.GameSnapshot> snapShots, int length)
+        private List<List<PlayerViewModel>> GetAllPlayersCombo(IEnumerable<GameSnapshot> snapShots, int length)
         {
             var combos = snapShots.Select(sn => GetKCombs(sn.PlayerNumbers, length)).ToList();
 
