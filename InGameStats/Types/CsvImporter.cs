@@ -57,8 +57,8 @@ namespace Types
                     return val;
                 };
 
-            var data = lines.Skip(1).ToArray();
-
+            var data = lines.Skip(1).ToList();
+            data = data.Where(line => line.Replace(" ", "").Replace(",", "").Trim().Length > 0).ToList();
 
             foreach (var l in data)
             {
@@ -114,12 +114,17 @@ namespace Types
                         break;
 
                 }
+                
                 if (!success)
                 {
-                    throw new InvalidDataException($"Failed to parse time data (timeLeftInQuarter):\n {timeLeftInQuarterStr}");
+                    var isLastRow = data.LastOrDefault() == l;
+                    if (!isLastRow) //If its the last row, it probably just a line that was not yet completed...
+                    {
+                        throw new InvalidDataException($"Failed to parse time data (timeLeftInQuarter):\n {timeLeftInQuarterStr}");
+                    }
                 }
-                var snapshot = new RawEntry(playerNumbers, quarter, timeLeftInQuarter, score, op_score);
-                entries.Add(snapshot);
+                var entry = new RawEntry(playerNumbers, quarter, timeLeftInQuarter, score, op_score);
+                entries.Add(entry);
             }
             entries = entries.OrderBy(snp => snp.Quarter).ThenByDescending(snp => snp.TimeLeft).ToList();
             return entries;
