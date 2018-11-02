@@ -12,17 +12,11 @@ namespace Types
         public ReadOnlyCollection<int> PlayerNumbers { get; }
         public int Quarter { get; }
         public TimeSpan TimeLeft { get; }
-        public int TeamScore { get; }
-        public int OponentScore { get; }
+        public virtual int TeamScore { get; }
+        public virtual int OponentScore { get; }
 
 
-        public TimeSpan TotalTimeLeft
-        {
-            get
-            {
-                return GetTotalTimeLeft(this.Quarter, TimeLeft);
-            }
-        }
+        
 
         public RawEntry(IList<int> playerNumber, int quarter, TimeSpan timeLeft, int teamScore, int oponentScore)
         {
@@ -37,11 +31,6 @@ namespace Types
         {
             return $"Quarter:{this.Quarter} {this.TimeLeft}; {this.TeamScore}:{this.OponentScore}; ({String.Join(",", this.PlayerNumbers)})";
         }
-
-        protected static TimeSpan GetTotalTimeLeft(int quarter, TimeSpan TimeLeftInQuarter)
-        {
-            var minutes = (4 - quarter) * 10.0 + TimeLeftInQuarter.TotalMinutes;
-            return TimeSpan.FromMinutes(minutes);
-        }
+       
     }
 }

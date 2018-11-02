@@ -62,7 +62,8 @@ namespace Types
         {
             return $"#{this.Number}; Minutes: {this.Minutes}; Rate: {this.Rate};";
         }
-        
 
+
+       
     }
 }

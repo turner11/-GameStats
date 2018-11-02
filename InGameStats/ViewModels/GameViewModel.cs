@@ -11,7 +11,7 @@ namespace ViewModels
     public class GameViewModel: ViewModelBase
     {
 
-       
+       static readonly TimeSpan LINEUPS_MIN_TIME = TimeSpan.FromMinutes(2.5);
 
         private readonly List<GameSnapshot> _snapshots;
         public ObservableCollection<PlayerViewModel> PlayersData { get; }
@@ -70,11 +70,8 @@ namespace ViewModels
             this.Linups3 = this.GetBestLineup(3);
             this.Linups2 = this.GetBestLineup(2);
 
-
-            IList<LineUpViewModel> allLineUps = this.GetLineup(5);
-
-            this.OffensiveLineups = allLineUps.OrderByDescending(lu => lu.TeamScore / lu.Minutes.TotalMinutes).FirstOrDefault();
-            this.DefensiveLineups = allLineUps.OrderBy(lu => lu.OponentScore / lu.Minutes.TotalMinutes).FirstOrDefault();
+            this.OffensiveLineups = this.GetOffensiveLineup();
+            this.DefensiveLineups = this.GetDeffensiveLineup();
 
 
             var lineUpLists = new[] {
@@ -102,7 +99,7 @@ namespace ViewModels
             var playerByMinutes = playersVM.OrderByDescending(pvm => pvm.Minutes).ToList();
             SetObservableColelctionContent(this.PlayerMinutes, playerByMinutes);
 
-           
+
 
 
             var snapshotsVM = snapShots.Select(sn => new SnapshotViewModel(sn, ImageProvider)).ToList();
@@ -110,23 +107,47 @@ namespace ViewModels
 
         }
 
+        private LineUpViewModel GetOffensiveLineup(int playerCount=5)
+        {
+            LineUp lineup = LineUp.GetOffensiveLineup(this._snapshots, playerCount, LINEUPS_MIN_TIME);
+            return this.LineUpToViewModel(lineup);
+        }
 
+        private LineUpViewModel GetDeffensiveLineup(int playerCount=5)
+        {
+            LineUp lineup = LineUp.GetDeffensiveLineup(this._snapshots, playerCount, LINEUPS_MIN_TIME);
+            return this.LineUpToViewModel(lineup);
+        }
+
+        private LineUpViewModel LineUpToViewModel(LineUp lineup)
+        {
+            var players = lineup.PlayerNumbers.Select(number => this.PlayersData.Where(pd => pd.Number == number).FirstOrDefault()).ToList();
+            return new LineUpViewModel(players, this._snapshots);
+        }
+
+        private IList<LineUpViewModel> GetLineup(int v)
+        {
+            IList<LineUp>  lineups = LineUp.GetLineups(v, this._snapshots);
+            List<int[]> numbers = lineups.Select(lu => lu.ToArray()).Distinct().ToList();
+            List<PlayerViewModel[]> players = numbers.Select(list => 
+                                list.Select(
+                                    n => this.PlayersData.FirstOrDefault(p=> p.Number == n)).ToArray()
+                            )
+                            .ToList();
+
+            
+            var vms = players.Select(ps => new LineUpViewModel(ps, this._snapshots)).ToList();
+            vms.Sort();
+            return vms;
+        }
 
         private LineUpViewModel GetBestLineup(int playerCount)
         {
-            var lineups = this.GetLineup(playerCount);
-            var bestLinup = lineups.FirstOrDefault();
-            return bestLinup;
-
-        }
-        private IList<LineUpViewModel> GetLineup(int playerCount)
-        {
-            List<List<PlayerViewModel>> combos = this.GetAllPlayersCombo(this._snapshots, playerCount);
-            var lineups = combos.Select(c => new LineUpViewModel(c, this._snapshots)).ToList();
-            lineups.Sort();
-            return lineups;
-           
-           
+            
+            LineUp lineup = LineUp.GetBestLineup(playerCount, this._snapshots, LINEUPS_MIN_TIME);
+            List<PlayerViewModel> players = this.PlayersData.Where(pvm => lineup.Contains(pvm.Number)).ToList();
+            var vm = new LineUpViewModel(players, this._snapshots);
+            return vm;
         }
 
         private static void SetObservableColelctionContent<T>(ObservableCollection<T> observable, IEnumerable<T> collection)
@@ -138,17 +159,7 @@ namespace ViewModels
             }
         }
 
-        private List<List<PlayerViewModel>> GetAllPlayersCombo(IEnumerable<GameSnapshot> snapShots, int length)
-        {
-            var combos = snapShots.Select(sn => GetKCombs(sn.PlayerNumbers, length)).ToList();
-
-            IEqualityComparer<List<int>> listComparer = new ListComparer();
-            var combosLists = combos.SelectMany(arr => arr.Select(v => v.ToList()).ToList()).Distinct(comparer: listComparer).ToList();
-
-            var players = combosLists.Select(c => this.PlayersData.Where(p => c.Contains(p.Number)).OrderBy(p=>p.Number).ToList()).ToList();
-
-            return players;
-        }
+       
 
         public void SetPlayers(IList<PlayerViewModel> players)
         {
@@ -159,33 +170,12 @@ namespace ViewModels
             }
         }
 
-        static IEnumerable<IEnumerable<T>>GetKCombs<T>(IEnumerable<T> list, int length) where T : IComparable
-        //static IEnumerable<IEnumerable<PlayerViewModel>> GetKCombs(IEnumerable<PlayerViewModel> list, int length)
-        {
-            if (length == 1) return list.Select(t => new T[] { t });
-            var ks = GetKCombs(list, length - 1)
-                .SelectMany(t => list.Where(o => o.CompareTo(t.Last()) > 0),
-                    (t1, t2) => t1.Concat(new T[] { t2 }));
-
-            //ks = ks.Select(arr => arr.ToList()).ToList();
-            return ks;
-        }
+        
 
 
  
 
-        public class ListComparer : IEqualityComparer<List<int>>
-        {
-            public bool Equals(List<int> x, List<int> y)
-            {
-                if (x.Count != y.Count)
-                    return false;
-                for (int i = 0; i < x.Count; i++)
-                    if (x[i] != y[i]) return false;
-                return true;
-            }
-            public int GetHashCode(List<int> x) => x.Count;
-        }
+        
 
 
     }

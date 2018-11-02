@@ -10,28 +10,28 @@ namespace ViewModels
 {
     public class LineUpViewModel: ViewModelBase, IComparable<LineUpViewModel>, IComparable
     {
+        private readonly LineUp _lineUp;
+
         public IReadOnlyCollection<PlayerViewModel> Players { get; }
         public IReadOnlyCollection<GameSnapshot> SnapShots { get; }
-        public TimeSpan Minutes { get; }
-        public int Rate { get; }
-        public int TeamScore { get; }
-        public int OponentScore { get; }
+        public TimeSpan Minutes => this._lineUp.Elapsed;
+        public int Rate => this._lineUp.Rate;
+        public int TeamScore => this._lineUp.TeamScore;
+        public int OponentScore => this._lineUp.OponentScore;
 
-        public double RatePerMinute { get; }
+
+
+        public double RatePerMinute => this._lineUp.RatePerMinute;
+        public double OffenciveRate => this._lineUp.OffenciveRate;
+        public double DefenciveRate => this._lineUp.DefenciveRate;
 
         public LineUpViewModel(IEnumerable<PlayerViewModel> players, IEnumerable<GameSnapshot> snapShots )
         {
+            this._lineUp = new LineUp(snapShots, players.Select(p => p.Number).ToArray());
             this.Players = players.OrderByDescending(p=>p.RatePerMinute).ToList().AsReadOnly();
             this.SnapShots = snapShots.Where(sn => players.All(p=> sn.PlayerNumbers.Contains(p.Number) )).ToList().AsReadOnly();
-
-
-
-            this.Minutes = SnapShots.Select(sn=> sn.Elapsed ?? TimeSpan.FromSeconds(0)).Aggregate((ts1,ts2)=> ts1+ts2);
-            this.Rate = SnapShots.Select(sn => sn.ScoreDiff).Aggregate((d1, d2) => d1 + d2);
-            this.TeamScore = SnapShots.Select(sn => sn.TeamScore).Aggregate((d1, d2) => d1 + d2);
-            this.OponentScore = SnapShots.Select(sn => sn.OponentScore).Aggregate((d1, d2) => d1 + d2);
-
-            this.RatePerMinute = Minutes.TotalMinutes > 0 ? Rate / Minutes.TotalMinutes : 0;
+            
+            
         }
 
         public override string ToString()
@@ -45,7 +45,7 @@ namespace ViewModels
             {
                 throw new ArgumentException("Need an instance of LineUpViewModel for comparison.");
             }
-            return this.RatePerMinute.CompareTo(other.RatePerMinute);
+            return this._lineUp.CompareTo(other._lineUp);
         }
 
         public int CompareTo(object obj)

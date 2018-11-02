@@ -56,9 +56,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RawEntries.cs" />
-    <Compile Include="Players.cs" />
-    <Compile Include="Snapshots.cs" />
+    <Compile Include="LinteupsTests.cs" />
+    <Compile Include="RawEntriesTests.cs" />
+    <Compile Include="PlayersTests.cs" />
+    <Compile Include="SnapshotsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

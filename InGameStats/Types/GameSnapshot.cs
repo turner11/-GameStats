@@ -7,30 +7,50 @@ using System.Threading.Tasks;
 
 namespace Types
 {
-    public class GameSnapshot:RawEntry
+    public class GameSnapshot
     {
         private int? SnapshotScoreDiff { get; }
+        public ReadOnlyCollection<int> PlayerNumbers { get; }
+
+        public TimeSpan TotalTimeLeft
+        {
+            get
+            {
+                return GetTotalTimeLeft(this.Quarter, TimeLeft);
+            }
+        }
         
+
         public int ScoreDiff
         {
             get { return this.SnapshotScoreDiff ?? 0; }
         }
-
-
-        public int GameScoreDiff
-        {
-            get { return this.TeamScore - this.OponentScore; }
-        }
-
-
+        
+        
         public TimeSpan? Elapsed { get; }
+        
+        public int Quarter { get; }
+        public TimeSpan TimeLeft { get; }
+        public int TeamScore { get; }
+        public int OponentScore { get; }
 
-        private GameSnapshot(IList<int> playerNumber, int quarter, TimeSpan timeLeft, int teamScore, int oponentScore, TimeSpan? elapsed, int snapshotScoreDiff)
-            :base(playerNumber, quarter, timeLeft, teamScore, oponentScore)
+        private GameSnapshot(IList<int> playerNumber, 
+                            int quarter, 
+                            TimeSpan timeLeft, 
+                            int teamScore, 
+                            int oponentScore,
+                            TimeSpan? elapsed, 
+                            int snapshotScoreDiff)
+            
         {
             
-            this.Elapsed = elapsed;
+            this.PlayerNumbers = playerNumber.ToList().AsReadOnly();
             this.SnapshotScoreDiff = snapshotScoreDiff;
+            this.Elapsed = elapsed;
+            this.Quarter = quarter;
+            this.TimeLeft = timeLeft;
+            this.TeamScore = teamScore;
+            this.OponentScore = oponentScore;
         }
 
         public static List<GameSnapshot> Factory(IList<RawEntry> entries)
@@ -47,42 +67,46 @@ namespace Types
             {
                 var entry = expandedEntries[i-1];
                 var nextEntry = expandedEntries[i];
-                TimeSpan? elapsed = entry.TotalTimeLeft - nextEntry.TotalTimeLeft;
+
+                var currTimeLeft = GetTotalTimeLeft(entry.Quarter, entry.TimeLeft);
+                var nextTimeLeft = GetTotalTimeLeft(nextEntry.Quarter, nextEntry.TimeLeft);
+                TimeSpan? elapsed = currTimeLeft  - nextTimeLeft;
 
 
                 var nextDiff = nextEntry.TeamScore - nextEntry.OponentScore;
                 var currDiff = entry.TeamScore - entry.OponentScore;
                 int snapshotScoreDiff = nextDiff - currDiff ;
 
-                var snapshot = new GameSnapshot(entry.PlayerNumbers, entry.Quarter, entry.TimeLeft, entry.TeamScore, entry.OponentScore,
-                                elapsed, snapshotScoreDiff: snapshotScoreDiff);
+
+                var currScore = nextEntry.TeamScore - entry.TeamScore;
+                var currOponentScore = nextEntry.OponentScore - entry.OponentScore;
+
+                var snapshot = new GameSnapshot(entry.PlayerNumbers, 
+                                                entry.Quarter, 
+                                                entry.TimeLeft,
+                                                currScore,
+                                                currOponentScore,
+                                                elapsed, 
+                                                snapshotScoreDiff: snapshotScoreDiff);
                 
                 snapshots.Add(snapshot);
             }
 
-            //RawEntry lastEntry = entries.LastOrDefault();
-            //var lastSnashot = new GameSnapshot(lastEntry.PlayerNumbers,
-            //                                    lastEntry.Quarter,
-            //                                    lastEntry.TimeLeft,
-            //                                    lastEntry.TeamScore,
-            //                                    lastEntry.OponentScore,
-            //                                    TimeSpan.FromSeconds(0),
-            //                                    snapshotScoreDiff: 0);
-
-            //snapshots.Add(lastSnashot);
+          
             return snapshots;
         }
 
-        public static GameSnapshot GetBeginingOfGameSnapshot()
-        {
-            return new GameSnapshot(new int[0], 1, TimeSpan.FromMinutes(10), 0, 0, TimeSpan.FromSeconds(0),0);
-        }
-
-
+     
 
         public override string ToString()
         {
             return $"Quarter:{this.Quarter} {this.TimeLeft}; {this.TeamScore}:{this.OponentScore}; ({String.Join(",", this.PlayerNumbers)})";
+        }
+
+        public static TimeSpan GetTotalTimeLeft(int quarter, TimeSpan TimeLeftInQuarter)
+        {
+            var minutes = (4 - quarter) * 10.0 + TimeLeftInQuarter.TotalMinutes;
+            return TimeSpan.FromMinutes(minutes);
         }
     }
 }

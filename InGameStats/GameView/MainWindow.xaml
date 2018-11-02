@@ -260,7 +260,7 @@
                             <TextBlock.Text>
                                     <MultiBinding  StringFormat="Offensive lineup (SPM: {0}/{1})'">
                                         <Binding Path="OffensiveLineups.TeamScore" />
-                                        <Binding Path="OffensiveLineups.Minutes.TotalMinutes" />
+                                        <Binding Path="OffensiveLineups.Minutes" />
                                 </MultiBinding>
                             
                             </TextBlock.Text>
@@ -277,7 +277,7 @@
                                 <TextBlock.Text>
                                     <MultiBinding  StringFormat="Deffensive lineup (SPM: {0}/{1})'">
                                         <Binding Path="DefensiveLineups.OponentScore" />
-                                        <Binding Path="DefensiveLineups.Minutes.TotalMinutes" />
+                                        <Binding Path="DefensiveLineups.Minutes" />
                                     </MultiBinding>
 
                                 </TextBlock.Text>
