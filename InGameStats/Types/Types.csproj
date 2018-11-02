@@ -77,6 +77,7 @@
     <Content Include="Images\10.JPG" />
     <Content Include="Images\11.JPG" />
     <Content Include="Images\13.JPG" />
+    <None Include="Images\2.JPG" />
     <Content Include="Images\22.jpg" />
     <None Include="Images\3.jpg" />
     <Content Include="Images\30.jpg" />
