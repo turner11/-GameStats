@@ -114,7 +114,7 @@ namespace Types
                         break;
 
                 }
-                
+
                 if (!success)
                 {
                     var isLastRow = data.LastOrDefault() == l;
@@ -123,8 +123,11 @@ namespace Types
                         throw new InvalidDataException($"Failed to parse time data (timeLeftInQuarter):\n {timeLeftInQuarterStr}");
                     }
                 }
-                var entry = new RawEntry(playerNumbers, quarter, timeLeftInQuarter, score, op_score);
-                entries.Add(entry);
+                else
+                {
+                    var entry = new RawEntry(playerNumbers, quarter, timeLeftInQuarter, score, op_score);
+                    entries.Add(entry);
+                }
             }
             entries = entries.OrderBy(snp => snp.Quarter).ThenByDescending(snp => snp.TimeLeft).ToList();
             return entries;
