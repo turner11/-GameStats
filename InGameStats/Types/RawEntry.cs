@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Types
 {
-    public class RawEntry: CoreRecored
+    public class RawEntry
     {
         public ReadOnlyCollection<int> PlayerNumbers { get; }
         public int Quarter { get; }

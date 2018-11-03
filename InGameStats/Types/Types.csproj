@@ -48,7 +48,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CoreRecored.cs" />
     <Compile Include="CsvImporter.cs" />
     <Compile Include="GameSnapshot.cs" />
     <Compile Include="LineUp.cs" />
