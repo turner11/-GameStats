@@ -47,8 +47,9 @@ namespace Tetsts
         public void OffensiveLineup()
         {
             var snapshots = LineupTests.GetSnapshots();
-            var lineup = LineUp.GetOffensiveLineup(snapshots, playerCount: 5);
-            
+            IList<LineUp> lineups = LineUp.GetOffensiveLineup(snapshots, playerCount: 5);
+            var lineup = lineups.FirstOrDefault();
+
 
             var expected = new int[] { 1, 2, 3, 4, 7 };
             CollectionAssert.AreEquivalent(expected, lineup);
@@ -59,7 +60,8 @@ namespace Tetsts
         public void DeffensiveLineup()
         {
             var snapshots = LineupTests.GetSnapshots();
-            var lineup = LineUp.GetDeffensiveLineup(snapshots, playerCount: 5, minTime:TimeSpan.FromMinutes(1));
+            IList<LineUp> lineups = LineUp.GetDeffensiveLineup(snapshots, playerCount: 5, minTime:TimeSpan.FromMinutes(1));
+            var lineup = lineups.FirstOrDefault();
 
 
             var expected = new int[] { 1, 2, 3, 4, 5 };

@@ -34,8 +34,8 @@ namespace Types
             snapShots = snapShots ?? new List<GameSnapshot>();
             this.PlayerNumbers = players.OrderBy(n => n).ToList().AsReadOnly();
 
-            //var ps = new int[] { 5, 2, 22, 55, 8 };
-            //if(ps.Intersect(this.PlayerNumbers).Count() ==5)
+            //var ps = new int[] { 3,7,11,30,31};
+            //if (ps.Intersect(this.PlayerNumbers).Count() == 5)
             //    1.ToString();
 
 
@@ -106,27 +106,28 @@ namespace Types
             return players;
         }
 
-        public static LineUp GetOffensiveLineup(IEnumerable<GameSnapshot> snapshots, int playerCount=5, TimeSpan? minTime=null)
+        public static IList<LineUp> GetOffensiveLineup(IEnumerable<GameSnapshot> snapshots, int playerCount=5, TimeSpan? minTime=null)
         {
             minTime = minTime ?? TimeSpan.FromSeconds(0);
             IList<LineUp> allLineUps = LineUp.GetLineups(playerCount, snapshots, 
                 filter:new Predicate<LineUp>(lu=> lu.Elapsed >= minTime));
 
-            
-            var lineup = allLineUps.OrderByDescending(lu => lu.TeamScore).FirstOrDefault();
-            return lineup ?? NULL_OBJECT;
+            return allLineUps.OrderByDescending(lu => lu.TeamScore).ToList();
+            //var lineup = allLineUps.OrderByDescending(lu => lu.TeamScore).FirstOrDefault();
+            //return lineup ?? NULL_OBJECT;
         }
 
 
-        public static LineUp GetDeffensiveLineup(IEnumerable<GameSnapshot> snapshots, int playerCount=5, TimeSpan? minTime = null)
+        public static IList<LineUp> GetDeffensiveLineup(IEnumerable<GameSnapshot> snapshots, int playerCount=5, TimeSpan? minTime = null)
         {
             minTime = minTime ?? TimeSpan.FromSeconds(0);
             IList<LineUp> allLineUps = LineUp.GetLineups(playerCount, snapshots,
                 filter: new Predicate<LineUp>(lu => lu.Elapsed >= minTime));
 
 
-            var lineup = allLineUps.OrderBy(lu => lu.OponentScore).FirstOrDefault();
-            return lineup ?? NULL_OBJECT;
+            return allLineUps.OrderBy(lu => lu.OponentScore).ToList();
+            //var lineup = allLineUps.OrderBy(lu => lu.OponentScore).FirstOrDefault();
+            //return lineup ?? NULL_OBJECT;
         }
 
 

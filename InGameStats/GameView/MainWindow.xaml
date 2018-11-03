@@ -134,27 +134,87 @@
                             </MultiBinding>
                         </TextBlock.Text>
 
-                    </TextBlock>
-
-                    <!--<TextBlock Text="+- Per Minute" 
-                                FontWeight="Bold"/>
-                    <TextBlock Text="{Binding Path=RatePerMinute}" 
-                               />
-
-                    <TextBlock Text="Total +-" 
-                               Grid.Row="2" Grid.Column="0" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding Path=Rate}" 
-                               Grid.Row="2" Grid.Column="1"/>
-
-
-                    <TextBlock Text="Minutes" 
-                               Grid.Row="3" Grid.Column="0" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding Path=Minutes}" 
-                               Grid.Row="3" Grid.Column="1"/>-->
+                    </TextBlock>                  
 
                 </Grid>
             </StackPanel>
         </DataTemplate>
+
+        <DataTemplate x:Key="LineupDataTemplate">
+            <Grid Background="LightSteelBlue">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    
+                </Grid.RowDefinitions>
+                <ListView Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Players}">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
+                                <Image Source="{Binding Image}" HorizontalAlignment="Center" 
+                                       VerticalAlignment="Top"
+                                        MaxHeight="35" Stretch="Uniform"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+
+                </ListView>
+                <TextBlock FontWeight="Bold" Grid.Row="1" Grid.Column="0" TextWrapping="NoWrap"  Padding="10,0,0,0" >
+
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}:{1}">
+                            <Binding Path="TeamScore" />
+                            <Binding Path="OponentScore" />
+
+
+                        </MultiBinding>
+                    </TextBlock.Text>
+
+                </TextBlock>
+                <TextBlock Grid.Row="2" Grid.Column="0" TextWrapping="NoWrap"  Padding="10,0,0,0" >
+
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}Rate: {1} [{2:0.##} Per Minute] {0}{3:mm':'ss} Minutes ">
+                            <Binding Source="{x:Static System:Environment.NewLine}"/>
+                            <Binding Path="Rate" />
+                            <Binding Path="RatePerMinute" />
+                            <Binding Path="Minutes" />
+                       
+                        </MultiBinding>
+                    </TextBlock.Text>
+
+                </TextBlock>
+
+
+                <TextBlock FontSize="10" FontWeight="Light"  Grid.Row="3" Grid.Column="0" TextWrapping="NoWrap"  Padding="10,0,0,0" >
+
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}OFFENCIVE RATE: {1:0.##}{0}DEFFENCIVE RATE: {2:0.##}">
+                            <Binding Source="{x:Static System:Environment.NewLine}"/>
+                            <Binding Path="OffenciveRate" />
+                            <Binding Path="DefenciveRate" />
+
+
+                        </MultiBinding>
+                    </TextBlock.Text>
+
+                </TextBlock>
+               
+            </Grid>
+        </DataTemplate>
+
     </Window.Resources>
     <Grid >
         <Grid.ColumnDefinitions>
@@ -224,20 +284,20 @@
                                     </ScrollViewer>
 
                                     <ListView  Name="lvLinup5"
-                                   ItemsSource="{Binding Path=Linups5.Players,  UpdateSourceTrigger=PropertyChanged}"
-                                   ItemTemplate="{StaticResource ModelDataTemplate}"/>
+                                   ItemsSource="{Binding Path=Linups5,  UpdateSourceTrigger=PropertyChanged}"
+                                   ItemTemplate="{StaticResource LineupDataTemplate}"/>
 
                                     <ListView  Name="lvLinup4"
-                                   ItemsSource="{Binding Path=Linups4.Players,  UpdateSourceTrigger=PropertyChanged}"
-                                   ItemTemplate="{StaticResource ModelDataTemplate}"/>
+                                   ItemsSource="{Binding Path=Linups4,  UpdateSourceTrigger=PropertyChanged}"
+                                   ItemTemplate="{StaticResource LineupDataTemplate}"/>
 
                                     <ListView  Name="lvLinup3"
-                                   ItemsSource="{Binding Path=Linups3.Players,  UpdateSourceTrigger=PropertyChanged}"
-                                   ItemTemplate="{StaticResource ModelDataTemplate}"/>
+                                   ItemsSource="{Binding Path=Linups3,  UpdateSourceTrigger=PropertyChanged}"
+                                   ItemTemplate="{StaticResource LineupDataTemplate}"/>
 
                                     <ListView  Name="lvLinup2"  
-                                   ItemsSource="{Binding Path=Linups2.Players,  UpdateSourceTrigger=PropertyChanged}"
-                                   ItemTemplate="{StaticResource ModelDataTemplate}"/>
+                                   ItemsSource="{Binding Path=Linups2,  UpdateSourceTrigger=PropertyChanged}"
+                                   ItemTemplate="{StaticResource LineupDataTemplate}"/>
                         </DockPanel>
                                 <!--</StackPanel>-->
                     </Grid>
@@ -254,38 +314,19 @@
                 <ListView  Name="lvMinutes"
                            ItemsSource="{Binding PlayerMinutes}"
                            ItemTemplate="{StaticResource ModelDataTemplate}"/>
-                        <StackPanel>
-                            <TextBlock                      
-                               FontWeight="Bold" >
-                            <TextBlock.Text>
-                                    <MultiBinding  StringFormat="Offensive lineup (SPM: {0}/{1})'">
-                                        <Binding Path="OffensiveLineups.TeamScore" />
-                                        <Binding Path="OffensiveLineups.Minutes" />
-                                </MultiBinding>
-                            
-                            </TextBlock.Text>
-                            </TextBlock>
+                        <StackPanel>                            
                             <ListView  Name="lvOffensive"                           
-                               ItemsSource="{Binding Path=OffensiveLineups.Players,  
+                               ItemsSource="{Binding Path=OffensiveLineups,  
                                 UpdateSourceTrigger=PropertyChanged}"
-                           ItemTemplate="{StaticResource ModelDataTemplate}"/>
+                           ItemTemplate="{StaticResource LineupDataTemplate}"/>
                         </StackPanel>
                         <StackPanel>
 
-                            <TextBlock                      
-                               FontWeight="Bold" >
-                                <TextBlock.Text>
-                                    <MultiBinding  StringFormat="Deffensive lineup (SPM: {0}/{1})'">
-                                        <Binding Path="DefensiveLineups.OponentScore" />
-                                        <Binding Path="DefensiveLineups.Minutes" />
-                                    </MultiBinding>
-
-                                </TextBlock.Text>
-                            </TextBlock>
+                           
                             <ListView  Name="lvDefensive"                           
-                               ItemsSource="{Binding Path=DefensiveLineups.Players,  
+                               ItemsSource="{Binding Path=DefensiveLineups,  
                                 UpdateSourceTrigger=PropertyChanged}"
-                           ItemTemplate="{StaticResource ModelDataTemplate}"/>
+                           ItemTemplate="{StaticResource LineupDataTemplate}"/>
                         </StackPanel>
                     </DockPanel>
                 </StackPanel>
