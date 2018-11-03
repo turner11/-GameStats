@@ -155,65 +155,6 @@
                 </Grid>
             </StackPanel>
         </DataTemplate>
-
-        <DataTemplate x:Key="LineupDataTemplate">
-            <StackPanel Orientation="Horizontal" Background="White" HorizontalAlignment="Stretch" MinWidth="200">
-                <!--Text="{Binding Path=Model_Id, FallbackValue=Model_Id}"-->
-                <Image Source="{Binding Path=Image}" MaxHeight="50" Width="50" Stretch="Uniform"/>
-                <Grid >
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
-
-
-
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="{Binding Path=Number, 
-                 StringFormat='#{0}'}"
-                               Grid.Row="0" Grid.Column="0" FontWeight="Bold" Foreground="Orange" Padding="10,0,0,0" />
-
-
-
-                    <TextBlock Grid.Row="1" Grid.Column="0" TextWrapping="NoWrap"  Padding="10,0,0,0" >
-
-                        <TextBlock.Text>
-                            <MultiBinding StringFormat="{}+- PER MINUTE: {1:0.##} {0} {2:mm':'ss} MINUTES  {0}RATE: {3}">
-                                <Binding Source="{x:Static System:Environment.NewLine}"/>
-                                <Binding Path="RatePerMinute" />
-                                <Binding Path="Minutes" />
-                                <Binding Path="Rate" />
-                            </MultiBinding>
-                        </TextBlock.Text>
-
-                    </TextBlock>
-
-                    <!--<TextBlock Text="+- Per Minute" 
-                                FontWeight="Bold"/>
-                    <TextBlock Text="{Binding Path=RatePerMinute}" 
-                               />
-
-                    <TextBlock Text="Total +-" 
-                               Grid.Row="2" Grid.Column="0" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding Path=Rate}" 
-                               Grid.Row="2" Grid.Column="1"/>
-
-
-                    <TextBlock Text="Minutes" 
-                               Grid.Row="3" Grid.Column="0" FontWeight="Bold"/>
-                    <TextBlock Text="{Binding Path=Minutes}" 
-                               Grid.Row="3" Grid.Column="1"/>-->
-
-            <!--</WrapPanel>-->
-                </Grid>
-            </StackPanel>
-               
-        </DataTemplate>
     </Window.Resources>
     <Grid >
         <Grid.ColumnDefinitions>
@@ -283,7 +224,7 @@
                                     </ScrollViewer>
 
                                     <ListView  Name="lvLinup5"
-                                   ItemsSource="{Binding Path=Linups5,  UpdateSourceTrigger=PropertyChanged}"
+                                   ItemsSource="{Binding Path=Linups5.Players,  UpdateSourceTrigger=PropertyChanged}"
                                    ItemTemplate="{StaticResource ModelDataTemplate}"/>
 
                                     <ListView  Name="lvLinup4"
