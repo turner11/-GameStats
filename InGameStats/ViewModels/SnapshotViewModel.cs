@@ -16,6 +16,8 @@ namespace ViewModels
 {
     public class SnapshotViewModel
     {
+        private readonly Dictionary<int, BitmapImage> imageByNumberCache = new Dictionary<int, BitmapImage>();
+
         private readonly GameSnapshot _snapshot;
         private readonly IPlayerImageProvider _imageProvider;
         private readonly List<BitmapImage> _players;
@@ -52,6 +54,10 @@ namespace ViewModels
 
         private BitmapImage GetPlayerImage(BitmapImage image, int numbner)
         {
+            BitmapImage bitmapImage;
+            if (this.imageByNumberCache.TryGetValue(numbner, out bitmapImage))
+                return bitmapImage;
+
             var text = $"#{numbner}";
             var bitmap = ImageUtils.BitmapImage2Bitmap(image);
             float width = 150;
@@ -68,7 +74,8 @@ namespace ViewModels
 
             g.Flush();
 
-            BitmapImage bitmapImage = ImageUtils.BitMapToBitMapImage(bitmap);
+            bitmapImage = ImageUtils.BitMapToBitMapImage(bitmap);
+            this.imageByNumberCache[numbner] = bitmapImage;
             return bitmapImage;
         }
 

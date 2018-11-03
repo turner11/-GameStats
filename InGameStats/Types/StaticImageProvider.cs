@@ -12,10 +12,8 @@ namespace Types
         const int WIDTH = 84;
         const int HEIGHT = 105;
 
-        private readonly Dictionary<int, Bitmap> imageByName = new Dictionary<int, Bitmap>()
-        {
-            { 1, null }
-        };
+        private readonly Dictionary<int, BitmapImage> imageByNumberCache = new Dictionary<int, BitmapImage>();
+        
         public Colors GetPlayerBackgroundImage(int playerNumber)
         {
             throw new System.NotImplementedException();
@@ -23,7 +21,10 @@ namespace Types
 
         public BitmapImage GetPlayerImage(int playerNumber)
         {
-            
+
+            BitmapImage bitmapImage;
+            if (this.imageByNumberCache.TryGetValue(playerNumber, out bitmapImage))
+                return bitmapImage;
 
             Bitmap ret;
             try
@@ -38,7 +39,9 @@ namespace Types
 
             var resized = ImageUtils.Resize(ret, WIDTH, HEIGHT);
 
-            BitmapImage bitmapImage = ImageUtils.BitMapToBitMapImage(resized);
+            bitmapImage = ImageUtils.BitMapToBitMapImage(resized);
+            this.imageByNumberCache[playerNumber] = bitmapImage;
+
             return bitmapImage;
         }
 
